@@ -38,6 +38,17 @@ GPIO.setup(OK_signal, GPIO.OUT)
 GPIO.setup(Trigger, GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(NOT_OK_signal, GPIO.OUT)
 
+bc_value_retain = open("bcvalues.txt","r") 
+#print(bc_value_retain.read(5))
+bc_value_string=bc_value_retain.read()
+#print(bc_value_string)
+brightness_value=bc_value_string[0:3]
+contrast_value=bc_value_string[3:8]
+print(brightness_value)
+print(contrast_value)
+bc_value_retain.close()
+brightness_value=int(brightness_value)
+contrast_value=int(contrast_value)
 key = cv2. waitKey(1)
 webcam = cv2.VideoCapture(-1,cv2.CAP_V4L)
 def thresholding(image):
@@ -150,7 +161,9 @@ def find_match():
 def template_capture():
     img_raw = cv2.imread("saved_img.jpg")
 
-
+    bcvalue=open("bcvalues.txt","w") 
+    bcvalue.write(str(brightness_value)+"  "+str(contrast_value))
+    bcvalue.close()
     #select ROI function
     roi = cv2.selectROI(img_raw)
 
@@ -185,7 +198,7 @@ b3=Button(root,text="Template_capture",font=("Arial Black",10,"bold"))
 b3.config(command=template_capture)
 b3.place(x=800,y=220)
 
-def controller(img, brightness=255, contrast=127):
+def controller(img, brightness, contrast):
     brightness = int((brightness - 0) * (255 - (-255)) / (510 - 0) + (-255))
     contrast = int((contrast - 0) * (127 - (-127)) / (254 - 0) + (-127))
     if brightness != 0:
@@ -217,10 +230,10 @@ def controller(img, brightness=255, contrast=127):
     return cal
 
 w1=Scale(root,from_=0,to=255,orient=VERTICAL,cursor="circle")
-w1.set(255)
+w1.set(brightness_value)
 w1.place(x=0,y=110)
 w2=Scale(root,from_=0,to=255,orient=VERTICAL,cursor="circle")
-w2.set(128)
+w2.set(contrast_value)
 w2.place(x=0,y=0)
 
 
@@ -230,6 +243,7 @@ while True:
 
     brightness_value=int(w1.get())
     contrast_value=int(w2.get())
+
     # kernal=slider3.get()
     # rang=slider4.get()
     img=webcam.read()[1]

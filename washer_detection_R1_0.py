@@ -14,7 +14,7 @@ import argparse
 import imutils
 from tkinter.font import BOLD
 from tkinter.tix import IMAGE
-from turtle import bgcolor, left
+from turtle import bgcolor, left, screensize
 from typing import Text, ValuesView
 import cv2
 from cv2 import circle
@@ -33,44 +33,102 @@ import numpy as np
 #import RPi.GPIO as GPIO
 import time
 from tkinter import Canvas
-
+root=Tk()
 
 OK_signal = 16
 NOT_OK_signal = 20
 Trigger = 19
 
 
+
+saved_parametres=open("bcvalues.txt","r")
+
+saved_parameters_retain=saved_parametres.read()
+
+match_percent_saved=int(saved_parameters_retain[0:4])
+print(match_percent_saved)
+min_thickness_saved=int(saved_parameters_retain[5:9])
+print(min_thickness_saved)
+max_thickness_saved=int(saved_parameters_retain[10:14])
+print(max_thickness_saved)
+exposure_saved=int(saved_parameters_retain[15:19])
+print(exposure_saved)
+FPS_saved=int(saved_parameters_retain[20:24])
+print(FPS_saved)
+H_min_saved=int(saved_parameters_retain[25:29])
+print(H_min_saved)
+S_min_saved=int(saved_parameters_retain[30:34])
+print(S_min_saved)
+V_min_saved=int(saved_parameters_retain[35:39])
+print(V_min_saved)
+H_max_saved=int(saved_parameters_retain[40:44])
+print(H_max_saved)
+S_max_saved=int(saved_parameters_retain[45:49])
+print(S_max_saved)
+V_max_saved=int(saved_parameters_retain[50:54])
+print(V_max_saved)
+
+
+match_percent=StringVar(root)
+min_thickness_val=StringVar()
+max_thickness_val=StringVar()
+exposure_val=StringVar()
+FPS_set=StringVar()
+H_min=StringVar()
+H_max=StringVar()
+S_min=StringVar()
+S_max=StringVar()
+V_min=StringVar()
+V_max=StringVar()
+
+
+match_percent.set(str(match_percent_saved))
+min_thickness_val.set(str(min_thickness_saved))
+max_thickness_val.set(str(max_thickness_saved))
+exposure_val.set(str(exposure_saved))
+FPS_set.set(str(FPS_saved))
+H_min.set(str(H_min_saved))
+S_min.set(str(S_min_saved))
+V_min.set(str(V_min_saved))
+H_max.set(str(H_max_saved))
+S_max.set(str(S_max_saved))
+V_max.set(str(V_max_saved))
+
+saved_parametres.close()
 #GPIO.setmode(GPIO.BCM)
 #GPIO.setup(OK_signal, GPIO.OUT)
 #GPIO.setup(Trigger, GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
 #GPIO.setup(NOT_OK_signal, GPIO.OUT)
 
-
-
-
-bc_value_retain = open("bcvalues.txt","r") 
+#bc_value_retain = open("bcvalues.txt","r") 
 #print(bc_value_retain.read(5))
-bc_value_string=bc_value_retain.read()
+#bc_value_string=bc_value_retain.read()
 #print(bc_value_string)
-brightness_value=bc_value_string[0:3]
-contrast_value=bc_value_string[3:9]
-print(brightness_value)
-print(contrast_value)
-bc_value_retain.close()
-brightness_value=int(brightness_value)
-contrast_value=int(contrast_value)
+#brightness_value=bc_value_string[0:3]
+#contrast_value=bc_value_string[3:9]
+#print(brightness_value)
+#print(contrast_value)
+#bc_value_retain.close()
+#brightness_value=int(brightness_value)
+#contrast_value=int(contrast_value)
 key = cv2. waitKey(1)
 cap = cv2.VideoCapture(0)
 cap.set(3,500)
 cap.set(4,200)
-cap.set(cv2.CAP_PROP_EXPOSURE,-3)
-cap.set(cv2.CAP_PROP_FPS,6)
+cap.set(cv2.CAP_PROP_EXPOSURE,exposure_saved)
+cap.set(cv2.CAP_PROP_FPS,FPS_saved)
 cap.set(cv2.CAP_PROP_ZOOM,0)
 def thresholding(image):
     return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY)
 def remove_noise(image):
     return cv2.medianBlur(image,5)
-root=Tk()
+
+
+
+
+
+
+
 root.geometry("1200x1100")
 root.configure(bg="white")
 Label(root,text="LIVE",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=50,y=220)
@@ -108,20 +166,105 @@ f4.place(x=200,y=250)
 live3=Label(f4,bg="black")
 live3.pack()
 
-Label(root,text="Match_percentage",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=10,y=260)
+Label(root,text="Match_percentage",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=10,y=240)
 f5=LabelFrame(root,bg="black")
-f5.place(x=10,y=270)
+f5.place(x=10,y=240)
 
 #inputtxt = Entry(root)
 #inputtxt.place(x=10,y=600)
-match_percent=StringVar(root)
-match_percent.set("80")
-sp = Spinbox(root, from_= 0, to = 100,textvariable=match_percent)
-sp.place(x=10,y=280)
 
+match_percent.set("80")
+sp = Spinbox(root, from_= 0, to = 100,textvariable=match_percent,width= 5)
+sp.place(x=10,y=260)
+
+
+Label(root,text="Min_thickness",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=10,y=280)
+f5=LabelFrame(root,bg="black")
+f5.place(x=10,y=280)
+
+#inputtxt = Entry(root,width= 40)
+#inputtxt.place(x=10,y=600)
+
+sp = Spinbox(root, from_= 0, to = 100,textvariable=min_thickness_val,width= 5)
+sp.place(x=10,y=300)
+
+Label(root,text="Max_thickness",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=10,y=320)
+f5=LabelFrame(root,bg="black")
+f5.place(x=10,y=320)
+
+#inputtxt = Entry(root)
+#inputtxt.place(x=10,y=600)
+
+sp = Spinbox(root, from_= 0, to = 100,textvariable=max_thickness_val,width= 5)
+sp.place(x=10,y=340)
+
+Label(root,text="Exposure",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=10,y=360)
+f5=LabelFrame(root,bg="black")
+f5.place(x=10,y=360)
+
+#inputtxt = Entry(root)
+#inputtxt.place(x=10,y=600)
+
+sp = Spinbox(root, from_= -8, to = 8,textvariable=exposure_val,width= 5)
+sp.place(x=10,y=380)
+
+Label(root,text="FPS",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=10,y=400)
+f5=LabelFrame(root,bg="black")
+f5.place(x=10,y=400)
+
+sp = Spinbox(root, from_= 0, to = 100,textvariable=FPS_set,width= 5)
+sp.place(x=10,y=420)
+
+Label(root,text="H",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=10,y=440)
+f5=LabelFrame(root,bg="black")
+f5.place(x=10,y=440)
+
+sp = Spinbox(root, from_= 0, to = 100,textvariable=H_min,width= 4)
+sp.place(x=10,y=460)
+
+Label(root,text="S",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=50,y=440)
+f5=LabelFrame(root,bg="black")
+f5.place(x=50,y=440)
+
+sp = Spinbox(root, from_= 0, to = 100,textvariable=S_min,width= 4)
+sp.place(x=50,y=460)
+
+Label(root,text="V",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=90,y=440)
+f5=LabelFrame(root,bg="black")
+f5.place(x=90,y=440)
+
+sp = Spinbox(root, from_= 0, to = 100,textvariable=V_min,width= 4)
+sp.place(x=90,y=460)
+
+
+#Label(root,text="H",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=10,y=480)
+#f5=LabelFrame(root,bg="black")
+#f5.place(x=10,y=480)
+
+sp = Spinbox(root, from_= 0, to = 100,textvariable=H_max,width= 4)
+sp.place(x=10,y=480)
+
+#Label(root,text="S",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=50,y=480)
+#f5=LabelFrame(root,bg="black")
+#f5.place(x=50,y=480)
+
+sp = Spinbox(root, from_= 0, to = 100,textvariable=S_max,width= 4)
+sp.place(x=50,y=480)
+
+sp = Spinbox(root, from_= 0, to = 100,textvariable=V_max,width= 4)
+sp.place(x=90,y=480)
+
+Label(root,text="Min",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=140,y=455)
+f5=LabelFrame(root,bg="black")
+f5.place(x=140,y=455)
+
+Label(root,text="Max",bg="white",fg="black",font=("times new roman",12,"bold")).place(x=140,y=477)
+f5=LabelFrame(root,bg="black")
+f5.place(x=140,y=477)
 
 def midpoint(ptA, ptB):
 	return ((ptA[0] + ptB[0]) * 0.5, (ptA[1] + ptB[1]) * 0.5)
+
 
 def conture_Detect_Measure():
     # read the image
@@ -185,18 +328,22 @@ def conture_Detect_Measure():
                     #dA=dA*100
                     dA=int(dA)
                     print(dA)
+                    if dA<min_thickness_saved:
+                        print("enter min_thickness greater than"+"  " +str(dA))
+                        my_canvas.itemconfig(my_oval, fill="RED")
+                        var.set("NOT OK")
                     dimB = dB / pixelsPerMetric
-                    print(int(dB))
+                    #print(int(dB))
             #range1=range(0.15,0.25)
-                    okrange=np.arange(0.15,0.25,0.1)
-                    nokrange=np.arange(0.24,0.35,0.1)
-                    if 5<dA<12:
+                    #okrange=np.arange(0.15,0.25,0.1)
+                    #nokrange=np.arange(0.24,0.35,0.1)
+                    if min_thickness_saved<dA<max_thickness_saved:
                         my_canvas.itemconfig(my_oval, fill="GREEN")
                         var.set("OK")
-                        print("job is ok")
-                    elif 12<dA<40:
+                        print("job is ok"+str(min_thickness_saved))
+                    elif max_thickness_saved<dA<40:
                         my_canvas.itemconfig(my_oval, fill="RED")
-                        var.set("2 washer nok")
+                        var.set("2 washer nok"+str(max_thickness_saved))
 
                     cv2.putText(orig, "{:.1f}in".format(dA),
 		            (int(tltrX - 15), int(tltrY - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 0, 0), 2)
@@ -215,7 +362,6 @@ def conture_Detect_Measure():
     #cv2.drawContours(image=orig, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=1)
 # see the results
     #cv2.imshow('None approximation', orig)
-
 
 def find_match():
     img_rgb = cv2.imread('roi1.jpg')
@@ -282,9 +428,9 @@ def find_match():
 def template_capture():
     img_raw = cv2.imread("saved_img.jpg")
 
-    bcvalue=open("bcvalues.txt","w") 
-    bcvalue.write(str(brightness_value)+"  "+str(contrast_value))
-    bcvalue.close()
+    #bcvalue=open("bcvalues.txt","w") 
+    #bcvalue.write(str(brightness_value)+"  "+str(contrast_value))
+    #bcvalue.close()
     #select ROI function
     roi = cv2.selectROI(img_raw)
 
@@ -294,7 +440,6 @@ def template_capture():
     #Crop selected roi from raw image
 
     
-
     roi_cropped = img_raw[int(roi[1]):int(roi[1]+roi[3]), int(roi[0]):int(roi[0]+roi[2])]
     print(int(roi[1]))
     print(int(roi[1]+roi[3]))
@@ -335,10 +480,10 @@ def capture_image():
     img_rgb_roi = cv2.imread('roi1.jpg')
     hsv = cv2.cvtColor(img_rgb_roi, cv2.COLOR_BGR2HSV)
     # define range of blue color in HSV 
-    lower_blue = np.array([3,0,0])
-    upper_blue = np.array([18,255,255])
+    lower_color = np.array([H_min,0,0])
+    upper_color = np.array([18,255,255])
     # Threshold the HSV image to get only blue colors
-    mask = cv2.inRange(hsv, lower_blue, upper_blue)
+    mask = cv2.inRange(hsv, lower_color, upper_color)
     # Bitwise-AND mask and original image
 
     res = cv2.bitwise_and(img_rgb_roi,img_rgb_roi, mask= mask)
@@ -351,17 +496,68 @@ def capture_image():
         cv2.destroyAllWindows()
    
 
+def save_parameter():
+    bcvalue=open("bcvalues.txt","w") 
+    bcvalue.write(str(match_percent.get()).zfill(4)+" "+str(min_thickness_val.get()).zfill(4)+" "+str(max_thickness_val.get()).zfill(4)+" "+str(exposure_val.get()).zfill(4)+" "+str(FPS_set.get()).zfill(4)+" "+str(H_min.get()).zfill(4)+" "+str(S_min.get()).zfill(4)+" "+str(V_min.get()).zfill(4)+" "+str(H_max.get()).zfill(4)+" "+str(S_max.get()).zfill(4)+" "+str(V_max.get()).zfill(4))
+    print(str(match_percent.get()).zfill(4)+" "+str(min_thickness_val.get()).zfill(4)+" "+str(max_thickness_val.get()).zfill(4)+" "+str(exposure_val.get()).zfill(4)+" "+str(FPS_set.get()).zfill(4)+" "+str(H_min.get()).zfill(4)+" "+str(S_min.get()).zfill(4)+" "+str(V_min.get()).zfill(4)+" "+str(H_max.get()).zfill(4)+" "+str(S_max.get()).zfill(4)+" "+str(V_max.get()).zfill(4))
+    bcvalue.close()
+
+    saved_parametres=open("bcvalues.txt","r")
+
+    saved_parameters_retain=saved_parametres.read()
+
+    match_percent_saved=int(saved_parameters_retain[0:4])
+    print(match_percent_saved)
+    min_thickness_saved=int(saved_parameters_retain[5:9])
+    print(min_thickness_saved)
+    max_thickness_saved=int(saved_parameters_retain[10:14])
+    print(max_thickness_saved)
+    exposure_saved=int(saved_parameters_retain[15:19])
+    print(exposure_saved)
+    FPS_saved=int(saved_parameters_retain[20:24])
+    print(FPS_saved)
+    H_min_saved=int(saved_parameters_retain[25:29])
+    print(H_min_saved)
+    S_min_saved=int(saved_parameters_retain[30:34])
+    print(S_min_saved)
+    V_min_saved=int(saved_parameters_retain[35:39])
+    print(V_min_saved)
+    H_max_saved=int(saved_parameters_retain[40:44])
+    print(H_max_saved)
+    S_max_saved=int(saved_parameters_retain[45:49])
+    print(S_max_saved)
+    V_max_saved=int(saved_parameters_retain[50:54])
+    print(V_max_saved)
+
+
+    match_percent.set(str(match_percent_saved))
+    min_thickness_val.set(str(min_thickness_saved))
+    max_thickness_val.set(str(max_thickness_saved))
+    exposure_val.set(str(exposure_saved))
+    FPS_set.set(str(FPS_saved))
+    H_min.set(str(H_min_saved))
+    S_min.set(str(S_min_saved))
+    V_min.set(str(V_min_saved))
+    H_max.set(str(H_max_saved))
+    S_max.set(str(S_max_saved))
+    V_max.set(str(V_max_saved))
+
+
 b1=Button(root,text="Capture",font=("Arial Black",10,"bold"))
 b1.config(command=capture_image)
 b1.place(x=500,y=220)
 
 b2=Button(root,text="Match",font=("Arial Black",10,"bold"))
 b2.config(command=conture_Detect_Measure)
-b2.place(x=10,y=320)
+b2.place(x=700,y=420)
 
 b3=Button(root,text="Template_capture",font=("Arial Black",10,"bold"))
 b3.config(command=template_capture)
 b3.place(x=800,y=220)
+
+b3=Button(root,text="Save_parameter",font=("Arial Black",10,"bold"))
+b3.config(command=save_parameter)
+b3.place(x=10,y=500)
 
 def controller(img, brightness, contrast):
     brightness = int((brightness - 0) * (255 - (-255)) / (510 - 0) + (-255))
@@ -394,20 +590,20 @@ def controller(img, brightness, contrast):
     #cv2.putText(cal, 'B:{},C:{}'.format(brightness,contrast),(10, 30), cv2.FONT_HERSHEY_SIMPLEX,1, (0, 0, 255), 2)
     return cal
 
-w1=Scale(root,from_=-10,to=+10,orient=VERTICAL,cursor="circle")
-w1.set(brightness_value)
-w1.place(x=0,y=110)
-w2=Scale(root,from_=0,to=10000,orient=VERTICAL,cursor="circle")
-w2.set(contrast_value)
-w2.place(x=0,y=0)
+#w1=Scale(root,from_=-10,to=+10,orient=VERTICAL,cursor="circle")
+#w1.set(brightness_value)
+#w1.place(x=0,y=110)
+#w2=Scale(root,from_=0,to=10000,orient=VERTICAL,cursor="circle")
+#w2.set(contrast_value)
+#w2.place(x=0,y=0)
 
 
 
 while True:
     
 
-    brightness_value=int(w1.get())
-    contrast_value=int(w2.get())
+    #brightness_value=int(w1.get())
+    #contrast_value=int(w2.get())
 
     # kernal=slider3.get()
     # rang=slider4.get()
@@ -442,6 +638,36 @@ while True:
     live3["image"]=result_img2
     root.update()
     #print(GPIO.input(Trigger))
+    saved_parametres=open("bcvalues.txt","r")
+
+    saved_parameters_retain=saved_parametres.read()
+
+    match_percent_saved=int(saved_parameters_retain[0:4])
+    #print(match_percent_saved)
+    min_thickness_saved=int(saved_parameters_retain[5:9])
+    #print(min_thickness_saved)
+    max_thickness_saved=int(saved_parameters_retain[10:14])
+    #print(max_thickness_saved)
+    exposure_saved=int(saved_parameters_retain[15:19])
+    #print(exposure_saved)
+    FPS_saved=int(saved_parameters_retain[20:24])
+    #print(FPS_saved)
+    H_min_saved=int(saved_parameters_retain[25:29])
+    #print(H_min_saved)
+    S_min_saved=int(saved_parameters_retain[30:34])
+    #print(S_min_saved)
+    V_min_saved=int(saved_parameters_retain[35:39])
+    #print(V_min_saved)
+    H_max_saved=int(saved_parameters_retain[40:44])
+    #print(H_max_saved)
+    S_max_saved=int(saved_parameters_retain[45:49])
+    #print(S_max_saved)
+    V_max_saved=int(saved_parameters_retain[50:54])
+    #print(V_max_saved)
+    saved_parametres.close()
+
+
+
 
     '''
     if GPIO.input(Trigger)== 1:

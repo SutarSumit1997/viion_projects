@@ -39,9 +39,9 @@ while True:
         break
 image=cv2.imread("ufi1.jpg") 
 # Crop image
-#cropped_image = image[438:644,417:747]
+cropped_image = image[438:644,417:747]
 # Display cropped image
-#cv2.imshow("Cropped image", cropped_image)
+cv2.imshow("Cropped image", cropped_image)
 cv2.waitKey(0)
 text = pytesseract.image_to_string(cropped_image)
 print(text)
